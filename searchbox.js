@@ -10,7 +10,8 @@
       param: 'query',
       dom_id: '#results',
       delay: 100,
-      loading_css: '#loading'
+      loading_css: '#loading',
+      characters: 3
     },
     
     loading: function() {
@@ -62,7 +63,7 @@
       .ajaxStart(function() { $.searchbox.start() })
       .ajaxStop(function() { $.searchbox.stop() })
       .keyup(function() {
-        if ($input.val() != this.previousValue) {
+        if ($input.val() != this.previousValue && $input.val().length >= $.searchbox.settings.characters) {
           $.searchbox.resetTimer(this.timer)
 
           this.timer = setTimeout(function() {  
