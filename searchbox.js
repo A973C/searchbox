@@ -49,7 +49,8 @@
   })
   
   $.fn.searchbox = function(config) {
-    var settings = $.extend(true, $.searchbox.settings, config || {})
+    $(this).data("config", config);
+    $.extend(true, $.searchbox.settings, $(this).data("config") || {});
     
     $(document).trigger('init.searchbox')
     $.searchbox.idle()
@@ -62,6 +63,7 @@
       .ajaxStart(function() { $.searchbox.start() })
       .ajaxStop(function() { $.searchbox.stop() })
       .keyup(function() {
+        $.extend(true, $.searchbox.settings, $(this).data("config") || {})
         if ($input.val() != this.previousValue) {
           $.searchbox.resetTimer(this.timer)
 
