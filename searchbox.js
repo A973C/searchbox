@@ -64,12 +64,8 @@
       .ajaxStart(function() { $.searchbox.start() })
       .ajaxStop(function() { $.searchbox.stop() })
       .keyup(function() {
-<<<<<<< HEAD
-        if ($input.val() != this.previousValue && $input.val().length >= $.searchbox.settings.characters) {
-=======
         $.extend(true, $.searchbox.settings, $(this).data("config") || {})
-        if ($input.val() != this.previousValue) {
->>>>>>> frne/master
+        if ($input.val() != this.previousValue && $input.val().length >= $.searchbox.settings.characters) {
           $.searchbox.resetTimer(this.timer)
 
           this.timer = setTimeout(function() {  
