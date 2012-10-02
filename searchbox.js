@@ -6,12 +6,12 @@
   
   $.extend(true, $.searchbox, {
     settings: {
-      url: '/search',
-      param: 'query',
+      url: '/search/',
       dom_id: '#results',
       delay: 100,
       loading_css: '#loading',
-      characters: 3
+      characters: 3,
+      template: ''
     },
     
     loading: function() {
@@ -27,15 +27,18 @@
     },
     
     process: function(terms) {
-      var path = $.searchbox.settings.url.split('?'),
-        query = [$.searchbox.settings.param, '=', terms].join(''),
-        base = path[0], params = path[1], query_string = query
-      
-      if (params) query_string = [params.replace('&amp;', '&'), query].join('&')
-      
-      $.get([base, '?', query_string].join(''), function(data) {
-        $($.searchbox.settings.dom_id).html(data)
-      })
+      $.get([$.searchbox.settings.url, terms].join(''), function (data) {
+        var results = null;
+        if (data.length) {
+          if (($.searchbox.settings.template) && (typeof Mustache != 'undefined')) {
+            var tmpl = $($.searchbox.settings.template).html();
+            results = Mustache.to_html(tmpl, $.parseJSON(data));
+          } else {
+            results = data;
+          }
+        }
+        $($.searchbox.settings.dom_id).html(results);
+      });
     },
     
     start: function() {
@@ -65,14 +68,19 @@
       .ajaxStop(function() { $.searchbox.stop() })
       .keyup(function() {
         $.extend(true, $.searchbox.settings, $(this).data("config") || {})
-        if ($input.val() != this.previousValue && $input.val().length >= $.searchbox.settings.characters) {
-          $.searchbox.resetTimer(this.timer)
+        if ($input.val().length >= $.searchbox.settings.characters) {
+          if ($input.val() != this.previousValue) {
+            $.searchbox.resetTimer(this.timer)
 
-          this.timer = setTimeout(function() {  
-            $.searchbox.process($input.val())
-          }, $.searchbox.settings.delay)
+            this.timer = setTimeout(function() {
+              $.searchbox.process($input.val())
+            }, $.searchbox.settings.delay)
         
-          this.previousValue = $input.val()
+            this.previousValue = $input.val()
+          }
+        } else {
+          $($.searchbox.settings.dom_id).html('');
+          this.previousValue = '';
         }
       })
     })
