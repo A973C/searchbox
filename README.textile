@@ -1,6 +1,11 @@
 h1. Searchbox
 
-This is a jQuery plugin that turns any textbox into a live search, or a "searchbox".
+Fork of a jQuery plugin that turns any textbox into a live search, or a "searchbox".
+
+- merged in "Searchbox character option":https://github.com/mrcsparker/searchbox by mrcsparker
+- merged in "Add multi-instance support":https://github.com/frne/searchbox by frne
+- added support for "Mustache":https://github.com/janl/mustache.js templates
+- the element (dom_id) will be dynamically cleared if no results are found
 
 h3. Usage
 
@@ -8,20 +13,22 @@ h3. Usage
 
 That's it, really. There are a few configuration options:
 
-* <code>url</code> - a GET request is sent to this url (default: '/search')
-* <code>param</code> - the actually parameter that gets sent to the server (default: 'query')
+* <code>url</code> - search parameters will be appended to this url (default: '/search/')
 * <code>dom_id</code> - the element that gets updated with the results (default: '#results')
 * <code>delay</code> - the keystroke delay (default: 100 ms)
 * <code>loading_css</code> - the css for an ajax spinner/loading bar (default: '#loading')
+* <code>characters</code> - minimum number of characters (default: 3)
+* <code>template</code> - optional Mustache template
 
 So, customizing each config option might look like this:
 
 <pre><code>$('input.search').searchbox({
-  url: '/your/search/url',
-  param: 'q',
+  url: '/live-search/',
   dom_id: '#thumbnails',
   delay: 250,
-  loading_css: '#spinner'
+  loading_css: '#spinner',
+  characters: 4,
+  template: '#searchTemplate'
 })</code></pre>
 
 h3. Hooks
@@ -35,6 +42,34 @@ There are a few places you can hook into the plugin by binding a function to spe
 Here's an example of how to make use of them:
 
 <pre><code>$(document).bind('init.searchbox', function() { ... })</code></pre>
+
+h3. Optional Mustache templates
+
+A basic Mustache template:
+
+<pre><code><script id="searchTemplate" type="text/template">
+  {{#results}}
+    <a href="{{ url }}">{{ title }}</a>
+  {{/results}}
+</script></code></pre>
+
+Template id passed to the plugin:
+
+<pre><code><script type="text/javascript">
+  $(document).ready(function () {
+    $('#search form input').searchbox({
+      template: '#searchTemplate'
+    })
+  });
+</script></code></pre>
+
+Results must be returned as JSON from the server:
+
+<pre><code>{"results": [
+  {"url":"http://www.github.com","title":"GitHub"},
+  {"url":"http://www.google.com","title":"Google"},
+  {"url":"http://www.jquery.com","title":"jquery.com"}
+]}</code></pre>
 
 h3. License
 
