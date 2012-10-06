@@ -63,7 +63,6 @@
       var $input = $(this)
       
       $input
-      .focus()
       .ajaxStart(function() { $.searchbox.start() })
       .ajaxStop(function() { $.searchbox.stop() })
       .keyup(function() {
